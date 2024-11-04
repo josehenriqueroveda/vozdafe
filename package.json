@@ -1,0 +1,16 @@
+{
+  "name": "church-news",
+  "version": "1.0.0",
+  "description": "Conteúdos e notícias para a sua igreja.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev"
+  },
+  "author": "Jose Henrique Roveda",
+  "license": "MIT",
+  "dependencies": {
+    "next": "^13.1.6",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}
