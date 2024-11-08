@@ -1,3 +1,3 @@
-# church-news
+# Voz da Fé
 
-Conteúdos e notícias para a sua igreja.
+Conteúdos, notícias, testemunhos e a Palavra compartilhada.
