@@ -4,7 +4,7 @@ on: pull_request
 
 jobs:
   prettier:
-    name: Prettier
+    name: prettier
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,7 +18,7 @@ jobs:
       - run: npm run lint:prettier:check
 
   eslint:
-    name: Eslint
+    name: es-lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -32,7 +32,7 @@ jobs:
       - run: npm run lint:eslint:check
 
   commitlint:
-    name: Commitlint
+    name: commit-lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -50,7 +50,7 @@ jobs:
   secretlint:
     permissions:
       contents: read
-    name: "Secretlint"
+    name: secret-lint
     runs-on: ubuntu-latest
     steps:
       - name: checkout
