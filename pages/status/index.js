@@ -3,7 +3,7 @@ import "app/globals.css";
 
 import { LuDatabase } from "react-icons/lu";
 import { LuArrowUpDown } from "react-icons/lu";
-// import { LuGitBranch } from "react-icons/lu";
+import { LuGitBranch } from "react-icons/lu";
 
 async function fetchAPI(key) {
   const response = await fetch(key);
@@ -21,6 +21,7 @@ export default function StatusPage() {
         <UpdatedAt />
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           <DatabaseStatus />
+          <DatabaseVersion />
         </div>
       </main>
     </>
@@ -38,7 +39,13 @@ function UpdatedAt() {
     updatedAtText = new Date(data.updated_at).toLocaleString("pt-BR");
   }
 
-  return <div>Last updated: {updatedAtText}</div>;
+  return (
+    <div className="mb-4 mt-2">
+      <span className="text-sm text-gray-600">
+        <strong>Last updated: </strong> {updatedAtText}
+      </span>
+    </div>
+  );
 }
 
 function DatabaseStatus() {
@@ -86,6 +93,35 @@ function DatabaseStatus() {
           </a>
         </span>
       </div>
+    </div>
+  );
+}
+
+function DatabaseVersion() {
+  const { isLoading, data } = useSWR("/api/v1/status", fetchAPI, {
+    refreshInterval: 10000,
+  });
+
+  let databaseVersionText = "...";
+
+  if (!isLoading && data) {
+    databaseVersionText = data.dependencies.database.version;
+  }
+
+  return (
+    <div className="transform rounded-lg bg-white p-6 shadow-sm transition duration-200 hover:shadow-md">
+      <div className="mb-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <LuGitBranch className="h-6 w-6 text-gray-600" />
+          <h2 className="text-lg font-medium text-gray-900">
+            Database Version
+          </h2>
+        </div>
+      </div>
+      <p className="text-2xl font-semibold text-gray-900">
+        {databaseVersionText}
+      </p>
+      <p className="mt-1 text-sm text-gray-500">PostgreSQL</p>
     </div>
   );
 }
