@@ -1,7 +1,7 @@
 import useSWR from "swr";
 import "app/globals.css";
 
-import { LuDatabase } from "react-icons/lu";
+import { LuDatabase, LuNetwork } from "react-icons/lu";
 import { LuArrowUpDown } from "react-icons/lu";
 import { LuGitBranch } from "react-icons/lu";
 
@@ -22,6 +22,7 @@ export default function StatusPage() {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           <DatabaseStatus />
           <DatabaseVersion />
+          <MaxConnections />
         </div>
       </main>
     </>
@@ -122,6 +123,33 @@ function DatabaseVersion() {
         {databaseVersionText}
       </p>
       <p className="mt-1 text-sm text-gray-500">PostgreSQL</p>
+    </div>
+  );
+}
+
+function MaxConnections() {
+  const { isLoading, data } = useSWR("/api/v1/status", fetchAPI, {
+    refreshInterval: 10000,
+  });
+
+  let maxConnectionsText = "...";
+
+  if (!isLoading && data) {
+    maxConnectionsText = data.dependencies.database.max_connections;
+  }
+
+  return (
+    <div className="transform rounded-lg bg-white p-6 shadow-sm transition duration-200 hover:shadow-md">
+      <div className="mb-4 flex items-center justify between">
+        <div className="flex items-center gap-3">
+          <LuNetwork className="h-6 w-6 text-gray-600" />
+          <h2 className="text-lg font-medium text-gray-900">Max Connections</h2>
+        </div>
+      </div>
+      <p className="text-2xl font-semibold text-gray-900">
+        {maxConnectionsText}
+      </p>
+      <p className="mt-1 text-sm text-gray-500">Maximum allowed</p>
     </div>
   );
 }
