@@ -1,7 +1,13 @@
 import useSWR from "swr";
 import "app/globals.css";
 
-import { LuDatabase, LuNetwork, LuServer, LuUsers } from "react-icons/lu";
+import {
+  LuDatabase,
+  LuGithub,
+  LuNetwork,
+  LuServer,
+  LuUsers,
+} from "react-icons/lu";
 import { LuArrowUpDown } from "react-icons/lu";
 import { LuGitBranch } from "react-icons/lu";
 
@@ -25,6 +31,7 @@ export default function StatusPage() {
           <MaxConnections />
           <OpenConnections />
           <VercelStatus />
+          <GitHubStatus />
         </div>
       </main>
     </>
@@ -60,8 +67,11 @@ function DatabaseStatus() {
   let statusColor = "bg-[#ffea00]";
 
   if (!isLoading && data) {
-    databaseStatusText = data.dependencies.database.version ? "Up" : "Degraded";
-    statusColor = databaseStatusText === "Up" ? "bg-[#22c55e]" : "bg-[#ef4444]";
+    databaseStatusText = data.dependencies.database.version
+      ? "Healthy"
+      : "Degraded";
+    statusColor =
+      databaseStatusText === "Healthy" ? "bg-[#22c55e]" : "bg-[#ef4444]";
   }
 
   return (
@@ -202,9 +212,12 @@ function VercelStatus() {
 
   if (!isLoading && data) {
     vercelStatusText =
-      data.status.description === "All Systems Operational" ? "Up" : "Degraded";
+      data.status.description === "All Systems Operational"
+        ? "Healthy"
+        : "Degraded";
     labelText = data.status.description;
-    statusColor = vercelStatusText === "Up" ? "bg-[#22c55e]" : "bg-[#ef4444]";
+    statusColor =
+      vercelStatusText === "Healthy" ? "bg-[#22c55e]" : "bg-[#ef4444]";
   }
 
   return (
@@ -223,6 +236,51 @@ function VercelStatus() {
       </div>
       <div className="flex items-center gap-2">
         <LuArrowUpDown className="h-4 w-4 text-gray-600" />
+        <span className="text-base text-gray-600">{labelText}</span>
+      </div>
+    </div>
+  );
+}
+
+function GitHubStatus() {
+  const { isLoading, data } = useSWR(
+    "https://www.githubstatus.com/api/v2/status.json",
+    fetchAPI,
+    {
+      refreshInterval: 60000,
+    },
+  );
+
+  let githubStatusText = "Loading...";
+  let labelText = "Loading...";
+  let statusColor = "bg-[#ffea00]";
+
+  if (!isLoading && data) {
+    githubStatusText =
+      data.status.description === "All Systems Operational"
+        ? "Healthy"
+        : "Degraded";
+    labelText = data.status.description;
+    statusColor =
+      githubStatusText === "Healthy" ? "bg-[#22c55e]" : "bg-[#ef4444]";
+  }
+
+  return (
+    <div className="transform rounded-lg bg-white p-6 shadow-sm transition duration-200 hover:shadow-md">
+      <div className="mb-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <LuServer className="h-6 w-6 text-gray-600" />
+          <h2 className="text-lg font-medium text-gray-900">GitHub Status</h2>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className={`h-2.5 w-2.5 rounded-full ${statusColor}`} />
+          <span className="text-sm font-medium text-gray-600">
+            {githubStatusText}
+          </span>
+        </div>
+      </div>
+      <div className="flex items-center gap-2">
+        <LuGithub className="h-4 w-4 text-gray-600" />
         <span className="text-base text-gray-600">{labelText}</span>
       </div>
     </div>
