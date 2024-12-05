@@ -1,7 +1,7 @@
 import useSWR from "swr";
 import "app/globals.css";
 
-import { LuDatabase, LuNetwork } from "react-icons/lu";
+import { LuDatabase, LuNetwork, LuServer, LuUsers } from "react-icons/lu";
 import { LuArrowUpDown } from "react-icons/lu";
 import { LuGitBranch } from "react-icons/lu";
 
@@ -23,6 +23,8 @@ export default function StatusPage() {
           <DatabaseStatus />
           <DatabaseVersion />
           <MaxConnections />
+          <OpenConnections />
+          <VercelStatus />
         </div>
       </main>
     </>
@@ -55,11 +57,11 @@ function DatabaseStatus() {
   });
 
   let databaseStatusText = "Loading...";
-  let statusColor = "bg-[#ef4444]";
+  let statusColor = "bg-[#ffea00]";
 
   if (!isLoading && data) {
-    databaseStatusText = data.dependencies.database ? "Up" : "Down";
-    statusColor = "bg-[#22c55e]";
+    databaseStatusText = data.dependencies.database.version ? "Up" : "Degraded";
+    statusColor = databaseStatusText === "Up" ? "bg-[#22c55e]" : "bg-[#ef4444]";
   }
 
   return (
@@ -88,7 +90,7 @@ function DatabaseStatus() {
       </div>
       <div className="flex items-center gap-2">
         <LuArrowUpDown className="h-4 w-4 text-gray-600" />
-        <span className="text-sm text-gray-600">
+        <span className="text-base text-gray-600">
           <a href="https://neonstatus.com/" target="_blank">
             Click to check <strong>Neon</strong> status
           </a>
@@ -150,6 +152,79 @@ function MaxConnections() {
         {maxConnectionsText}
       </p>
       <p className="mt-1 text-sm text-gray-500">Maximum allowed</p>
+    </div>
+  );
+}
+
+function OpenConnections() {
+  const { isLoading, data } = useSWR("/api/v1/status", fetchAPI, {
+    refreshInterval: 10000,
+  });
+
+  let openConnectionsText = "...";
+  let labelText = "Connections";
+
+  if (!isLoading && data) {
+    openConnectionsText = data.dependencies.database.open_connections;
+    labelText = openConnectionsText > 1 ? "Connections" : "Connection";
+  }
+
+  return (
+    <div className="transform rounded-lg bg-white p-6 shadow-sm trasition duration-200 hover:shadow-md">
+      <div className="mb-4 flex items-center justify-between">
+        <div className="mb-4 flex items-center gap-3">
+          <LuUsers className="h-6 w-6 text-gray-600" />
+          <h2 className="text-lg font-medium text-gray-900">
+            Open Connections
+          </h2>
+        </div>
+      </div>
+      <p className="text-2xl font-semibold text-gray-900">
+        {openConnectionsText}
+      </p>
+      <p className="mt-1 text-sm text-gray-500">{labelText}</p>
+    </div>
+  );
+}
+
+function VercelStatus() {
+  const { isLoading, data } = useSWR(
+    "https://www.vercel-status.com/api/v2/status.json",
+    fetchAPI,
+    {
+      refreshInterval: 60000,
+    },
+  );
+
+  let vercelStatusText = "Loading...";
+  let labelText = "Loading...";
+  let statusColor = "bg-[#ffea00]";
+
+  if (!isLoading && data) {
+    vercelStatusText =
+      data.status.description === "All Systems Operational" ? "Up" : "Degraded";
+    labelText = data.status.description;
+    statusColor = vercelStatusText === "Up" ? "bg-[#22c55e]" : "bg-[#ef4444]";
+  }
+
+  return (
+    <div className="transform rounded-lg bg-white p-6 shadow-sm transition duration-200 hover:shadow-md">
+      <div className="mb-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <LuServer className="h-6 w-6 text-gray-600" />
+          <h2 className="text-lg font-medium text-gray-900">Vercel Status</h2>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className={`h-2.5 w-2.5 rounded-full ${statusColor}`} />
+          <span className="text-sm font-medium text-gray-600">
+            {vercelStatusText}
+          </span>
+        </div>
+      </div>
+      <div className="flex items-center gap-2">
+        <LuArrowUpDown className="h-4 w-4 text-gray-600" />
+        <span className="text-base text-gray-600">{labelText}</span>
+      </div>
     </div>
   );
 }
