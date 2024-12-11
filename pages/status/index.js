@@ -5,11 +5,11 @@ import {
   LuDatabase,
   LuGithub,
   LuNetwork,
-  LuServer,
   LuUsers,
+  LuArrowUpDown,
+  LuGitBranch,
+  LuTriangle,
 } from "react-icons/lu";
-import { LuArrowUpDown } from "react-icons/lu";
-import { LuGitBranch } from "react-icons/lu";
 
 async function fetchAPI(key) {
   const response = await fetch(key);
@@ -224,12 +224,12 @@ function VercelStatus() {
     <div className="transform rounded-lg bg-white p-6 shadow-sm transition duration-200 hover:shadow-md">
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <LuServer className="h-6 w-6 text-gray-600" />
+          <LuTriangle className="h-6 w-6 text-gray-600" />
           <h2 className="text-lg font-medium text-gray-900">Vercel Status</h2>
         </div>
         <div className="flex items-center gap-2">
           <div className={`h-2.5 w-2.5 rounded-full ${statusColor}`} />
-          <span className="text-sm font-medium text-gray-600">
+          <span className="text-base font-medium text-gray-600">
             {vercelStatusText}
           </span>
         </div>
@@ -269,18 +269,18 @@ function GitHubStatus() {
     <div className="transform rounded-lg bg-white p-6 shadow-sm transition duration-200 hover:shadow-md">
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <LuServer className="h-6 w-6 text-gray-600" />
+          <LuGithub className="h-6 w-6 text-gray-600" />
           <h2 className="text-lg font-medium text-gray-900">GitHub Status</h2>
         </div>
         <div className="flex items-center gap-2">
           <div className={`h-2.5 w-2.5 rounded-full ${statusColor}`} />
-          <span className="text-sm font-medium text-gray-600">
+          <span className="text-base font-medium text-gray-600">
             {githubStatusText}
           </span>
         </div>
       </div>
       <div className="flex items-center gap-2">
-        <LuGithub className="h-4 w-4 text-gray-600" />
+        <LuArrowUpDown className="h-4 w-4 text-gray-600" />
         <span className="text-base text-gray-600">{labelText}</span>
       </div>
     </div>
